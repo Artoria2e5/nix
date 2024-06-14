@@ -65,7 +65,7 @@ struct CmdSearch : InstallableValueCommand, MixJSON
     void run(ref<Store> store, ref<InstallableValue> installable) override
     {
         settings.readOnlyMode = true;
-        evalSettings.enableImportFromDerivation.setDefault(false);
+        globalEvalSettings.enableImportFromDerivation.setDefault(false);
 
         // Recommend "^" here instead of ".*" due to differences in resulting highlighting
         if (res.empty())

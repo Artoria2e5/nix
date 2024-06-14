@@ -258,7 +258,7 @@ void SourceExprCommand::completeInstallable(AddCompletions & completions, std::s
         if (file) {
             completions.setType(AddCompletions::Type::Attrs);
 
-            evalSettings.pureEval = false;
+            globalEvalSettings.pureEval = false;
             auto state = getEvalState();
             auto e =
                 state->parseExprFromFile(
@@ -442,7 +442,7 @@ ref<eval_cache::EvalCache> openEvalCache(
     EvalState & state,
     std::shared_ptr<flake::LockedFlake> lockedFlake)
 {
-    auto fingerprint = evalSettings.useEvalCache && evalSettings.pureEval
+    auto fingerprint = globalEvalSettings.useEvalCache && globalEvalSettings.pureEval
         ? lockedFlake->getFingerprint(state.store)
         : std::nullopt;
     auto rootLoader = [&state, lockedFlake]()
@@ -484,7 +484,7 @@ Installables SourceExprCommand::parseInstallables(
             throw UsageError("'--file' and '--expr' are exclusive");
 
         // FIXME: backward compatibility hack
-        if (file) evalSettings.pureEval = false;
+        if (file) globalEvalSettings.pureEval = false;
 
         auto state = getEvalState();
         auto vFile = state->allocValue();

@@ -348,7 +348,7 @@ struct CmdFlakeCheck : FlakeCommand
     {
         if (!build) {
             settings.readOnlyMode = true;
-            evalSettings.enableImportFromDerivation.setDefault(false);
+            globalEvalSettings.enableImportFromDerivation.setDefault(false);
         }
 
         auto state = getEvalState();
@@ -578,7 +578,7 @@ struct CmdFlakeCheck : FlakeCommand
                         fmt("checking flake output '%s'", name));
 
                     try {
-                        evalSettings.enableImportFromDerivation.setDefault(name != "hydraJobs");
+                        globalEvalSettings.enableImportFromDerivation.setDefault(name != "hydraJobs");
 
                         state->forceValue(vOutput, pos);
 
@@ -1119,7 +1119,7 @@ struct CmdFlakeShow : FlakeCommand, MixJSON
 
     void run(nix::ref<nix::Store> store) override
     {
-        evalSettings.enableImportFromDerivation.setDefault(false);
+        globalEvalSettings.enableImportFromDerivation.setDefault(false);
 
         auto state = getEvalState();
         auto flake = std::make_shared<LockedFlake>(lockFlake());

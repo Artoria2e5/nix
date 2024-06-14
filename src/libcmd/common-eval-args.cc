@@ -13,6 +13,12 @@
 
 namespace nix {
 
+EvalSettings globalEvalSettings {
+    settings.readOnlyMode
+};
+
+static GlobalConfig::Register rEvalSettings(&globalEvalSettings);
+
 MixEvalArgs::MixEvalArgs()
 {
     addFlag({
@@ -134,7 +140,7 @@ MixEvalArgs::MixEvalArgs()
         .description = "Allow access to mutable paths and repositories.",
         .category = category,
         .handler = {[&]() {
-            evalSettings.pureEval = false;
+            globalEvalSettings.pureEval = false;
         }},
     });
 

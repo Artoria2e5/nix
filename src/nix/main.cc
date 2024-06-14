@@ -240,9 +240,9 @@ static void showHelp(std::vector<std::string> subcommand, NixArgs & toplevel)
 {
     auto mdName = subcommand.empty() ? "nix" : fmt("nix3-%s", concatStringsSep("-", subcommand));
 
-    evalSettings.restrictEval = false;
-    evalSettings.pureEval = false;
-    EvalState state({}, openStore("dummy://"));
+    globalEvalSettings.restrictEval = false;
+    globalEvalSettings.pureEval = false;
+    EvalState state({}, openStore("dummy://"), globalEvalSettings);
 
     auto vGenerateManpage = state.allocValue();
     state.eval(state.parseExprFromString(
@@ -391,7 +391,7 @@ void mainWrapped(int argc, char * * argv)
         if (legacy) return legacy(argc, argv);
     }
 
-    evalSettings.pureEval = true;
+    globalEvalSettings.pureEval = true;
 
     setLogFormat("bar");
     settings.verboseBuild = false;
@@ -417,8 +417,8 @@ void mainWrapped(int argc, char * * argv)
             Xp::DynamicDerivations,
             Xp::FetchTree,
         };
-        evalSettings.pureEval = false;
-        EvalState state({}, openStore("dummy://"));
+        globalEvalSettings.pureEval = false;
+        EvalState state({}, openStore("dummy://"), globalEvalSettings);
         auto res = nlohmann::json::object();
         res["builtins"] = ({
             auto builtinsJson = nlohmann::json::object();
@@ -530,8 +530,8 @@ void mainWrapped(int argc, char * * argv)
         settings.ttlPositiveNarInfoCache = 0;
     }
 
-    if (args.command->second->forceImpureByDefault() && !evalSettings.pureEval.overridden) {
-        evalSettings.pureEval = false;
+    if (args.command->second->forceImpureByDefault() && !globalEvalSettings.pureEval.overridden) {
+        globalEvalSettings.pureEval = false;
     }
 
     try {

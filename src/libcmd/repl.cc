@@ -690,7 +690,7 @@ void NixRepl::loadFlake(const std::string & flakeRefS)
         throw Error("cannot use ':load-flake' without a path specified. (Use '.' for the current working directory.)");
 
     auto flakeRef = parseFlakeRef(flakeRefS, absPath("."), true);
-    if (evalSettings.pureEval && !flakeRef.input.isLocked())
+    if (globalEvalSettings.pureEval && !flakeRef.input.isLocked())
         throw Error("cannot use ':load-flake' on locked flake reference '%s' (use --impure to override)", flakeRefS);
 
     Value v;
@@ -699,8 +699,8 @@ void NixRepl::loadFlake(const std::string & flakeRefS)
         flake::lockFlake(*state, flakeRef,
             flake::LockFlags {
                 .updateLockFile = false,
-                .useRegistries = !evalSettings.pureEval,
-                .allowUnlocked = !evalSettings.pureEval,
+                .useRegistries = !globalEvalSettings.pureEval,
+                .allowUnlocked = !globalEvalSettings.pureEval,
             }),
         v);
     addAttrsToScope(v);

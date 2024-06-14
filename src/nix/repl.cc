@@ -10,7 +10,7 @@ namespace nix {
 struct CmdRepl : RawInstallablesCommand
 {
     CmdRepl() {
-        evalSettings.pureEval = false;
+        globalEvalSettings.pureEval = false;
     }
 
     /**

@@ -1,5 +1,4 @@
 #include "users.hh"
-#include "globals.hh"
 #include "fetch-settings.hh"
 #include "flake.hh"
 

@@ -44,7 +44,8 @@ static Strings parseNixPath(const std::string & s)
     return res;
 }
 
-EvalSettings::EvalSettings()
+EvalSettings::EvalSettings(bool & readOnlyMode)
+    : readOnlyMode{readOnlyMode}
 {
     auto var = getEnv("NIX_PATH");
     if (var) nixPath = parseNixPath(*var);
@@ -54,7 +55,7 @@ EvalSettings::EvalSettings()
         builtinsAbortOnWarn = true;
 }
 
-Strings EvalSettings::getDefaultNixPath()
+Strings EvalSettings::getDefaultNixPath() const
 {
     Strings res;
     auto add = [&](const Path & p, const std::string & s = std::string()) {
@@ -67,7 +68,7 @@ Strings EvalSettings::getDefaultNixPath()
         }
     };
 
-    if (!evalSettings.restrictEval && !evalSettings.pureEval) {
+    if (!restrictEval && !pureEval) {
         add(getNixDefExpr() + "/channels");
         add(rootChannelsDir() + "/nixpkgs", "nixpkgs");
         add(rootChannelsDir());
@@ -93,15 +94,11 @@ std::string EvalSettings::resolvePseudoUrl(std::string_view url)
         return std::string(url);
 }
 
-const std::string & EvalSettings::getCurrentSystem()
+const std::string & EvalSettings::getCurrentSystem() const
 {
     const auto & evalSystem = currentSystem.get();
     return evalSystem != "" ? evalSystem : settings.thisSystem.get();
 }
-
-EvalSettings evalSettings;
-
-static GlobalConfig::Register rEvalSettings(&evalSettings);
 
 Path getNixDefExpr()
 {
